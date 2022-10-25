@@ -32,9 +32,9 @@ nc target port
 ```
 
 ### icmp_ts.py
-Obtain timezone via ICMP packet.
+Obtain local time from the remote host via ICMP packet.
 
-`sudo ./icmp_ts.py 10.0.0.10`
+![icmp_ts.png](demo/icmp_ts.png)
 
 ### tcp_analyze.py
 Performs network usage analyze of targets machine by IP.id and obtaint system uptime.
