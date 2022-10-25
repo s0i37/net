@@ -78,6 +78,14 @@ We can see that TCP and UDP packets going to the same port are moving along diff
 ### path_discover_group.py
 Visual traceroute in graph form with grouping by servers (by system uptime).
 
+```
+msf> services -c port,proto
+sudo ./path_discover_group.py
+8.8.8.8 53 tcp
+8.8.8.8 53 udp
+ctrl-D
+```
+
 ![path_discover_group.png](demo/path_discover_group.png)
 
 Utility determines belongings of ports to real servers.
