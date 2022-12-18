@@ -59,9 +59,9 @@ Power traceroute with arbitrary L4-packet on steroids:
 ![traceroute.png](demo/traceroute.png)
 
 ### tracebuster.py
-Find a hidden path into your network.
+Finds a hidden paths in your network.
 
-For example, collects a 3-hops uniq paths for each 255-subnetwork via 80/tcp packets:
+For example, collects a 3-hops uniq paths for each /24-subnetwork via 80/tcp packets:
 
 `sudo ./tracebuster.py 3 tcp 172.16.0.0/12 80`
 
