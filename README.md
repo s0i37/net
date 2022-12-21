@@ -65,6 +65,10 @@ For example, collects a 3-hops uniq paths for each /24-subnetwork via 80/tcp pac
 
 `sudo ./tracebuster.py 3 tcp 172.16.0.0/12 80`
 
+![tracebuster.gif](demo/tracebuster.gif)
+
+In result it generate dot-graph of discovered topology:
+
 ![tracebuster.png](demo/tracebuster.png)
 
 ### path_discover.py

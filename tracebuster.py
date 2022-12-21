@@ -4,6 +4,7 @@ from sys import argv, stdout
 from time import sleep
 from threading import Thread
 from netaddr import IPNetwork
+from pydot import *
 
 
 conf.verb = False
@@ -29,7 +30,9 @@ class Hop:
 		self.msg = ""
 
 paths = []
+size = 0
 def probe(ip):
+	global size
 	hops = {}
 	for hop in traceroute(ip, l4=packet, maxttl=max_hops, timeout=0.1)[0]:
 		req,res = hop
@@ -41,11 +44,26 @@ def probe(ip):
 	for hop in hops:
 		path += hops[hop].recv[IP].src + '->'
 
-	#stdout.write(f"[*] {ip}: {path}\r"); stdout.flush()
+	delta = 0 if len(f"[*] {ip}: {path}") > size else len(f"[*] {ip}: {path}") - size
+	size = len(f"[*] {ip}: {path}")
+
+	stdout.write(f"[*] {ip}: {path}\r"); stdout.flush()
 	if not path in paths:
-		print(f"[+] {ip}: {path}" + " "*30)
+		print(f"[+] {ip}: {path}" + " "*delta)
 		paths.append(path)
 
-for network in IPNetwork(targets).subnet(24):
-	probe(str(network[1]))
-	#sleep(0.1)
+try:
+	for network in IPNetwork(targets).subnet(24):
+		probe(str(network[1]))
+		#sleep(0.1)
+except:
+	pass
+
+graph = Dot(graph_type='digraph', rankdir="LR")
+for path in paths:
+	prev = "attacker"
+	for node in path.split("->"):
+		if node:
+			graph.add_edge(Edge(prev, node))
+			prev = node
+graph.write_dot("out.dot")
