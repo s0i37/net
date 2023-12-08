@@ -58,6 +58,10 @@ Power traceroute with arbitrary L4-packet on steroids:
 
 ![traceroute.png](demo/traceroute.png)
 
+A graph of delays on each hop will be displayed in real time:
+
+![traceroute_graph.png](demo/traceroute2.png)
+
 ### tracebuster.py
 Finds a hidden paths in your network.
 
