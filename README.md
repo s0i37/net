@@ -92,6 +92,23 @@ Shows the path of the packet in the direction of each port.
 
 We can see that TCP and UDP packets going to the same port are moving along different routes.
 
+### path_discover3d.py
+Visual traceroute in interactive 3D-graph form.
+
+```
+msf> services -c port,proto
+sudo ./path_discover.py
+8.8.8.8 80 tcp
+1.1.1.1 53 udp
+ctrl-D
+```
+
+Just open `out.html` in browser:
+
+![path_discover3d.gif](demo/path_discover3d.gif)
+
+Study how your traffic flows to different nodes on the Internet.
+
 ### path_discover_group.py
 Visual traceroute in graph form with grouping by servers (by system uptime).
 
