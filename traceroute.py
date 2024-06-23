@@ -33,13 +33,11 @@ class Hop:
 		self.msg = ""
 
 mutex = Lock()
-def monitor_id(hop, fix):
+def monitor_id(hop):
 	def measurement(measurements, packet, timeout):
 		ans = sr1(packet, timeout=TIMEOUT)
 		if ans:
 			measurements[timeout].append(ans[IP].id)
-		else:
-			measurements[timeout].append(0)
 	while True:
 		mutex.acquire()
 		before = time()
@@ -60,10 +58,11 @@ def monitor_id(hop, fix):
 			sleep(0.1)
 			ids = []
 			for delta in measurements:
-				if len(measurements[delta]) == 2 and not 0 in measurements[delta]:
+				if len(measurements[delta]) == 2:
 					id1,id2 = measurements[delta]
-					ids.append(abs(id2-id1-1)/delta)
-			delta_id = int(sum(ids)/len(measurements)) - fix
+					if abs(id2-id1-1) != 0:
+						ids.append(abs(id2-id1-1)/delta)
+			delta_id = int(sum(ids)/len(ids)) if len(ids) else 0
 			hop.delta_id = delta_id if delta_id > 0 else 0
 		else:
 			hop.ip = None
@@ -125,14 +124,15 @@ threads = []
 for n in range(1,len(hops)+1):
 	hop = hops[n]
 	if hop:
-		thread = Thread(target=monitor_id, args=(hop, (n-1)*(len(DELTAS)+2) ))
+		#thread = Thread(target=monitor_id, args=(hop, (n-len(hops))*(len(DELTAS)*2+1) ))
+		thread = Thread(target=monitor_id, args=(hop,))
 		thread.start()
 		threads.append(thread)
 
 plt.draw()
 while True:
 	output = []
-	rtt_delta = 0
+	rtt = 0
 	prev = []
 	for n in range(1,len(hops)+1):
 		hop = hops[n]
@@ -143,14 +143,14 @@ while True:
 			else:
 				hop.geo = ""
 				hop.netname = "intranet"
-			rtt = "%.03f(+%.03f)"%(hop.rtt,abs(hop.rtt-rtt_delta)) if rtt_delta else "%.03f"%hop.rtt
+			rtt = "%.03f(+%.03f)"%(hop.rtt,abs(hop.rtt-rtt)) if rtt else "%.03f"%hop.rtt
 			delta_id = "+"+str(hop.delta_id) if hop.delta_id else 0
 			output.append([hop.msg, n, hop.ip, hop.ttl, rtt, delta_id, hop.geo, hop.netname])
 			hop.msg = "[*]"
-			rtt_delta = hop.rtt
+			rtt = hop.rtt
 
 			try:
-				plt.plot(range(len(hop.rtts)), list(map(lambda ms:ms[0]+ms[1], zip(prev,hop.rtts))) if prev else hop.rtts, label=hop.ip)
+				plt.plot(range(len(hop.rtts)), list(map(lambda ms:ms[0]+ms[1], zip(prev,hop.rtts))) if prev else hop.rtts, label="%s %s %s"%(hop.ip, hop.netname, hop.geo))
 				prev = hop.rtts[:]
 				plt.legend()
 			except:
